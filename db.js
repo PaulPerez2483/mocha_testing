@@ -1,6 +1,9 @@
 const Sequelize = require("sequelize");
 const conn = new Sequelize(
-	process.env.DATABASE_URL || "postgres://localhost/acme_api_db"
+	process.env.DATABASE_URL || "postgres://localhost/acme_api_db",
+	{
+		logging: false
+	}
 );
 
 const { UUID, UUIDV4, STRING } = Sequelize;
@@ -36,7 +39,7 @@ const Department = conn.define("department", {
 		}
 	}
 });
-Department.hasMany(User);
+// Department.hasMany(User);
 User.belongsTo(Department);
 
 const syncAndSeed = async () => {
@@ -50,6 +53,17 @@ const syncAndSeed = async () => {
 		User.create({ name: "Paul", departmentId: colombia.id }),
 		User.create({ name: "Mark", departmentId: spain.id })
 	]);
+
+	return {
+		users: {
+			paul,
+			mark
+		},
+		departments: {
+			colombia,
+			spain
+		}
+	};
 };
 
 module.exports = {
